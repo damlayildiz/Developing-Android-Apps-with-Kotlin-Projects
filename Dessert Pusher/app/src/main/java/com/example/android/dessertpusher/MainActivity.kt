@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     private var revenue = 0
     private var dessertsSold = 0
+    private var dessertTimer: DessertTimer? = null
 
     // Contains all the views
     private lateinit var binding: ActivityMainBinding
@@ -67,6 +68,11 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.i("onCreate called")
+        dessertTimer = DessertTimer(this.lifecycle)
+
+        if (savedInstanceState != null) {
+            revenue = savedInstanceState.getInt("KEY_REVENUE", 0)
+        }
 
         // Use Data Binding to get reference to the views
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -85,6 +91,7 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     override fun onStart() {
         super.onStart()
+        dessertsSold = 0
         Timber.i("onStart called")
     }
 
@@ -146,6 +153,15 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState.putInt("KEY_REVENUE", revenue)
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
